@@ -19,8 +19,10 @@ if ! [ -e index.php -a -e ecrire/inc_version.php ]; then
 		echo >&2 "WARNING: $PWD is not empty - press Ctrl+C now if this is an error!"
 		( set -x; ls -A; sleep 10 )
 	fi
-	tar cf - --one-file-system -C /usr/src/spip . | tar xf -
-	echo >&2 "Complete! SPIP has been successfully copied to $PWD"
+	spip core:telecharger --branche ${SPIP_VERSION} --release ${SPIP_PACKAGE}
+
+#	tar cf - --one-file-system -C /usr/src/spip . | tar xf -
+	echo >&2 "Complete! SPIP has been successfully installed to $PWD"
 
   echo >&2 "Create plugins, libraries and template directories"
   mkdir -p plugins/auto; \

@@ -1,0 +1,53 @@
+version: "3.2"
+
+services:
+  php:
+    image: ashledombos/spip-php
+#    build: './php'
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    volumes:
+      - spip-data:/var/www/html      
+  apache:
+    image: ashledombos/spip-web
+#    build: './httpd'
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8080:80"
+    volumes:
+      - spip-data:/var/www/html
+    labels:
+      - "traefik.frontend.rule=Host:spip.docker.localhost"
+
+  mysql:
+    image: ashledombos/spip-db
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+
+#  reverse-proxy:
+#    image: traefik # The official Traefik docker image
+#    command: --api --docker # Enables the web UI and tells Træfik to listen to docker
+#    ports:
+#      - "80:80"     # The HTTP port
+#      - "8080:8080" # The Web UI (enabled by --api)
+#    networks:
+#      - frontend
+#      - backend
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events     
+      
+volumes:
+   spip-data:
+
+networks:
+   frontend:
+   backend:
