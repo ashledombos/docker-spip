@@ -1,21 +1,23 @@
-version: "3.5"
+version: '3.5'
 
 services:
   php:
-    image: 127.0.0.1:5000/ashledombos/spip-php:latest
+    image: '127.0.0.1:5000/ashledombos/spip-php:latest'
     build: './fpm'
     depends_on:
-      - mysql
+      - mariadb
     networks:
       - backend
     volumes:
-      - spip-data:/var/www/html      
+      - spip-data:/var/www/html
+    configs:
+      - vhost_spip.conf
   apache:
-    image: 127.0.0.1:5000/ashledombos/spip-web:latest
+    image: '127.0.0.1:5000/ashledombos/spip-web:latest'
     build: './web'
     depends_on:
       - php
-      - mysql
+      - mariadb
     networks:
       - frontend
       - backend
@@ -23,15 +25,18 @@ services:
       - "8080:80"
     volumes:
       - spip-data:/var/www/html
+    configs:
+      - vhost_spip.conf
     labels:
       - "traefik.frontend.rule=Host:spip.docker.localhost"
-
-  mysql:
-          image: yobasystems/alpine-mariadb:latest
+  mariadb:
+    image: yobasystems/alpine-mariadb:latest
     networks:
       - backend
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
+  redis:
+    image: "redis:alpine"
 
 #  reverse-proxy:
 #    image: traefik # The official Traefik docker image
@@ -46,12 +51,12 @@ services:
 #      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events     
       
 volumes:
-  spip-data:
+   spip-data:
 
 networks:
-  frontend:
-  backend:
+   frontend:
+   backend:
 
 configs:
-  vhost_spip.conf:
+   vhost_spip.conf:
     file: ./vhost_spip.conf
