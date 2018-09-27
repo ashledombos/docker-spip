@@ -5,36 +5,54 @@ services:
     image: '127.0.0.1:5000/ashledombos/spip-php:latest'
     build: './fpm'
     depends_on:
-      - mariadb
+      - mysql
     networks:
       - backend
     volumes:
       - spip-data:/var/www/html
-    configs:
-      - vhost_spip.conf
+    environment:
+    - SPIP_DB_SERVER=mysql
+    - SPIP_DB_HOST=mysql
+    - SPIP_DB_LOGIN=spip
+    - SPIP_DB_PASS=spip
+    - SPIP_DB_NAME=spip
+    - SPIP_DB_PREFIX=spip
+    # change after this line
+    - SPIP_ADMIN_NAME=Admin
+    - SPIP_ADMIN_LOGIN=admin
+    - SPIP_ADMIN_EMAIL=admin@spip
+    - SPIP_ADMIN_PASS=adminadmin=
+    - PHP_MAX_EXECUTION_TIME=60
+    - PHP_MEMORY_LIMIT=256M
+    - PHP_POST_MAX_SIZE=40M
+    - PHP_UPLOAD_MAX_FILESIZE=32M
+    - PHP_TIMEZONE=America/Guadeloupe
   apache:
     image: '127.0.0.1:5000/ashledombos/spip-web:latest'
     build: './web'
     depends_on:
       - php
-      - mariadb
+      - mysql
     networks:
       - frontend
       - backend
     ports:
-      - "8080:80"
+      - "8081:80"
     volumes:
       - spip-data:/var/www/html
     configs:
       - vhost_spip.conf
     labels:
       - "traefik.frontend.rule=Host:spip.docker.localhost"
-  mariadb:
+  mysql:
     image: yobasystems/alpine-mariadb:latest
     networks:
       - backend
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=spip
+      - MYSQL_USER=spip
+      - MYSQL_PASSWORD=spip
+      - MYSQL_ROOT_PASSWORD=spip
   redis:
     image: "redis:alpine"
 

@@ -38,7 +38,7 @@ RUN apk --update --no-cache add \
     zlib-dev \
   && docker-php-ext-install zip opcache
 
-# Install utils and remove apt cache
+# Install utils and remove apt cache (no need to clean cache as we used --no-cache)
 RUN apk --update --no-cache add \
     unzip \
     gettext \
@@ -55,7 +55,11 @@ RUN { \
 		echo 'opcache.enable_cli=0'; \
 } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
+# Active apache rewrite mode
+# (as it's not ubuntu a2enmode doesn't work. Instead we activate the module in spip.apache.conf)
+
 # Install spip-CLI
+# (For the fun here is installed )
 
 COPY install_composer.sh /install_composer.sh
 
@@ -68,10 +72,18 @@ RUN svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip
     && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip 
 #    && echo 'source /opt/spip-cli/bin/spip_console_autocomplete' > /root/.bashrc
 
-# VOLUME ["/var/www/html"]
+VOLUME ["/var/www/html"]
 
 ENV SPIP_VERSION 3.2
 ENV SPIP_PACKAGE 3.2.1
+
+
+# Install SPIP
+RUN set -ex; \
+  curl -o spip.zip -fSL "files.spip.net/spip/archives/SPIP-v${SPIP_PACKAGE}.zip"; \
+  unzip spip.zip -d /usr/src/; \
+  rm spip.zip; \
+  chown -R www-data:www-data /usr/src/spip
 
 # SPIP
 ENV SPIP_DB_SERVER mysql
@@ -92,11 +104,8 @@ ENV PHP_POST_MAX_SIZE 40M
 ENV PHP_UPLOAD_MAX_FILESIZE 32M
 ENV PHP_TIMEZONE America/Guadeloupe
 
-EXPOSE 80
+EXPOSE 9000
 
 COPY ./docker-entrypoint.sh /
 
-#ENTRYPOINT ["sh /docker-entrypoint.sh"]
-#ENTRYPOINT ["sh","/docker-entrypoint.sh"]
-
-#CMD ["/bin/bash"]
+ENTRYPOINT ["sh","/docker-entrypoint.sh"]
