@@ -5,4 +5,6 @@ COPY spip.apache.conf /usr/local/apache2/conf/spip.apache.conf
 RUN echo "Include /usr/local/apache2/conf/spip.apache.conf" \
     >> /usr/local/apache2/conf/httpd.conf
     
+VOLUME ["/var/www/html"]
+    
 EXPOSE 80
