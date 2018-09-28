@@ -47,24 +47,26 @@ RUN apk --update --no-cache add \
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
 RUN { \
-		echo 'opcache.memory_consumption=128'; \
-		echo 'opcache.interned_strings_buffer=8'; \
-		echo 'opcache.max_accelerated_files=4000'; \
-		echo 'opcache.revalidate_freq=2'; \
-		echo 'opcache.fast_shutdown=1'; \
-		echo 'opcache.enable_cli=0'; \
-} > /usr/local/etc/php/conf.d/opcache-recommended.ini
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=8'; \
+    echo 'opcache.max_accelerated_files=4000'; \
+    echo 'opcache.revalidate_freq=2'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=0'; \
+    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 # Active apache rewrite mode
 # (as it's not ubuntu a2enmode doesn't work. Instead we activate the module in spip.apache.conf)
 
 # Install spip-CLI
 # (For the fun here is installed )
+RUN php -r "readfile('http://getcomposer.org/installer');" \
+    | php -- --install-dir=/usr/local/bin/ --filename=composer --no-plugins --no-scripts
 
-COPY install_composer.sh /install_composer.sh
+#    COPY install_composer.sh /install_composer.sh
 
-RUN sh /install_composer.sh \
-    && mv composer.phar /usr/local/bin/composer
+#RUN sh /install_composer.sh \
+#    && mv composer.phar /usr/local/bin/composer
 
 RUN svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip-cli \
     && cd /opt/spip-cli \
