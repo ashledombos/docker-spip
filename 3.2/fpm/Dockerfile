@@ -109,3 +109,5 @@ EXPOSE 9000
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["sh","/docker-entrypoint.sh"]
+
+CMD ["php-fpm"]

@@ -48,6 +48,8 @@ services:
     image: yobasystems/alpine-mariadb:latest
     networks:
       - backend
+    volumes:
+      - spip-db:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=spip
       - MYSQL_USER=spip
@@ -70,6 +72,7 @@ services:
       
 volumes:
    spip-data:
+   spip-db:
 
 networks:
    frontend:
