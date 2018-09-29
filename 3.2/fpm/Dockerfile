@@ -27,6 +27,7 @@ RUN apk --update --no-cache add \
 
 # Install Imagick
 RUN apk --update --no-cache add \
+    imagemagick \
     imagemagick-dev \
     ${PHPIZE_DEPS} \
   && yes ""|pecl install imagick \
@@ -58,21 +59,14 @@ RUN { \
 # Active apache rewrite mode
 # (as it's not ubuntu a2enmode doesn't work. Instead we activate the module in spip.apache.conf)
 
-# Install spip-CLI
-# (For the fun here is installed )
+# Install SPIP-Cli (Composer is now needed)
 RUN php -r "readfile('http://getcomposer.org/installer');" \
-    | php -- --install-dir=/usr/local/bin/ --filename=composer --no-plugins --no-scripts
-
-#    COPY install_composer.sh /install_composer.sh
-
-#RUN sh /install_composer.sh \
-#    && mv composer.phar /usr/local/bin/composer
-
-RUN svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip-cli \
+    | php -- --install-dir=/usr/local/bin/ --filename=composer --no-plugins --no-scripts \
+    && svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip-cli \
+    && rm -rf /opt/spip-cli/.svn \
     && cd /opt/spip-cli \
     && composer install \
-    && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip 
-#    && echo 'source /opt/spip-cli/bin/spip_console_autocomplete' > /root/.bashrc
+    && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip
 
 VOLUME ["/var/www/html"]
 
