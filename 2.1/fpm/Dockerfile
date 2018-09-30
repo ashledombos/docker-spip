@@ -33,11 +33,14 @@ RUN apk --update --no-cache add \
   && yes ""|pecl install imagick \
   && docker-php-ext-enable imagick \
   && apk del ${PHPIZE_DEPS}
-  
+
 # Install Redis
-RUN yes ""|pecl install -o -f redis \
-    &&  rm -rf /tmp/pear \
-    &&  docker-php-ext-enable redis
+#RUN apk --update --no-cache add \
+#    ${PHPIZE_DEPS} \
+#    yes ""|pecl install -o -f redis \
+#    &&  rm -rf /tmp/pear \
+#    &&  docker-php-ext-enable redis \
+#    && apk del ${PHPIZE_DEPS}
 
 # Active over php extension (mbstring and json already installed)
 RUN apk --update --no-cache add \

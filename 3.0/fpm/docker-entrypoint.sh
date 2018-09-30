@@ -90,7 +90,7 @@ if [ ! -e data/config/connect.php ]; then
 		# Fix bug can't create admin account for SPIP 3.0 by retry SPIP install
 		# Need to fix spip-cli "mysql_query() expects parameter 2 to be resource"
 		if [ ${SPIP_VERSION} == '3.0' ]; then
-			(cd spip install \
+			(cd core && spip install \
 				--db-server ${SPIP_DB_SERVER} \
 				--db-host ${SPIP_DB_HOST} \
 				--db-login ${SPIP_DB_LOGIN} \
