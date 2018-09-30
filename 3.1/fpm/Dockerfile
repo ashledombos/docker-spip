@@ -33,6 +33,11 @@ RUN apk --update --no-cache add \
   && yes ""|pecl install imagick \
   && docker-php-ext-enable imagick \
   && apk del ${PHPIZE_DEPS}
+  
+# Install Redis
+RUN yes ""|pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
 
 # Active over php extension (mbstring and json already installed)
 RUN apk --update --no-cache add \
@@ -67,8 +72,9 @@ RUN php -r "readfile('http://getcomposer.org/installer');" \
     && cd /opt/spip-cli \
     && composer install \
     && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip
-
-VOLUME ["/var/www/html"]
+    
+VOLUME ["/var/www/html/core/"]
+VOLUME ["/var/www/html/data/"]
 
 ENV SPIP_VERSION 3.1
 ENV SPIP_PACKAGE 3.1.8
