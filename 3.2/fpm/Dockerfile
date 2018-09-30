@@ -67,8 +67,11 @@ RUN php -r "readfile('http://getcomposer.org/installer');" \
     && cd /opt/spip-cli \
     && composer install \
     && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip
+    
+#RUN mkdir -p /var/www/html/core /var/www/html/data
 
-VOLUME ["/var/www/html"]
+VOLUME ["/var/www/html/core/"]
+VOLUME ["/var/www/html/data/"]
 
 ENV SPIP_VERSION 3.2
 ENV SPIP_PACKAGE 3.2.1

@@ -13,27 +13,48 @@ echo 'upload_max_filesize=${PHP_UPLOAD_MAX_FILESIZE}'; \
 echo 'date.timezone=${PHP_TIMEZONE}'; \
 ) > /usr/local/etc/php/conf.d/spip.ini
 
-if ! [ -e index.php -a -e ecrire/inc_version.php ]; then
-	echo >&2 "SPIP not found in $PWD - copying now..."
-	if [ "$(ls -A)" ]; then
-		echo >&2 "WARNING: $PWD is not empty - press Ctrl+C now if this is an error!"
-		( set -x; ls -A; sleep 10 )
-	fi
-	tar cf - --one-file-system -C /usr/src/spip . | tar xf -
-	echo >&2 "Complete! SPIP has been successfully copied to $PWD"
+echo >&2 "Setting SPIP core in $PWD/core/"
+rm -Rf /var/www/html/core/*
+tar cf - --one-file-system -C /usr/src/spip . | tar xf - -C core
+echo >&2 "Complete! SPIP has been successfully copied to $PWD/core/"
 
-  echo >&2 "Create plugins, libraries and template directories"
-  mkdir -p plugins/auto; \
-    mkdir -p lib; \
-    mkdir -p squelettes; \
-		mkdir -p tmp/{dump,log,upload}; \
-		chown -R www-data:www-data plugins lib squelettes tmp
-
-	if [ ! -e .htaccess ]; then
-    cp htaccess.txt .htaccess
-		chown www-data:www-data .htaccess
-	fi
+echo >&2 "Move IMG and config in $PWD/data/ if needed"
+if [ ! -d data/IMG ]; then
+  mv core/IMG data/
+else
+  rm -Rf core/IMG/
 fi
+if [ ! -d data/config ]; then
+  mv core/config data/
+else
+  rm -Rf core/config
+fi
+
+echo >&2 "Apache uses $PWD/data/htaccess.txt instead of .htaccess"
+if [ ! -e data/htaccess.txt ]; then
+  mv core/htaccess.txt data/htaccess.txt
+else
+  rm core/htaccess.txt
+fi
+
+echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if they don't exist"
+mkdir -p data/plugins/auto
+mkdir -p data/lib
+mkdir -p data/squelettes
+
+echo >&2 "Populate $PWD/core/tmp directory"
+mkdir -p core/tmp/{dump,log,upload}
+
+echo >&2 "change rights"
+chown -R www-data:www-data data/IMG data/config data/plugins data/lib data/squelettes data/htaccess.txt core/tmp
+
+echo >&2 "create all symlinks"
+ln -s $PWD/data/IMG core/
+ln -s $PWD/data/config core/
+ln -s $PWD/data/plugins core/
+ln -s $PWD/data/lib core/
+ln -s $PWD/data/squelettes core/
+ln -s $PWD/data/htaccess.txt core/
 
 # Install SPIP
 if [ ! -e config/connect.php ]; then
