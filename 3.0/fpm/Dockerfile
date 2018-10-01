@@ -21,7 +21,7 @@ RUN apk --update --no-cache add \
 # Install mysql (sqlite is already installed)
 RUN apk --update --no-cache add \
     mariadb-client \
-  && docker-php-ext-install mysqli
+  && docker-php-ext-install mysql
 
 # Install curl (curl already installed)
 
