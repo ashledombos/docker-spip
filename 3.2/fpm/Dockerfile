@@ -35,12 +35,9 @@ RUN apk --update --no-cache add \
   && apk del ${PHPIZE_DEPS}
   
 # Install Redis
-#RUN apk --update --no-cache add \
-#    ${PHPIZE_DEPS} \
-#    yes ""|pecl install -o -f redis \
-#    &&  rm -rf /tmp/pear \
-#    &&  docker-php-ext-enable redis \
-#    && apk del ${PHPIZE_DEPS}
+RUN pecl bundle -d /usr/src/php/ext redis \
+    && rm /usr/src/php/ext/redis-*.tgz \
+    && docker-php-ext-install redis
 
 # Active over php extension (mbstring and json already installed)
 RUN apk --update --no-cache add \

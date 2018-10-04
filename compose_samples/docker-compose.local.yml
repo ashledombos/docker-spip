@@ -1,0 +1,83 @@
+version: '3.5'
+
+services:
+  php:
+    image: '127.0.0.1:5000/ashledombos/spip-php:latest'
+    build: './fpm'
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    volumes:
+      - spip-data:/var/www/html
+    environment:
+    - SPIP_DB_SERVER=mysql
+    - SPIP_DB_HOST=mysql
+    - SPIP_DB_LOGIN=spip
+    - SPIP_DB_PASS=spip
+    - SPIP_DB_NAME=spip
+    - SPIP_DB_PREFIX=spip
+    # change after this line
+    - SPIP_ADMIN_NAME=Admin
+    - SPIP_ADMIN_LOGIN=admin
+    - SPIP_ADMIN_EMAIL=admin@spip
+    - SPIP_ADMIN_PASS=adminadmin=
+    - PHP_MAX_EXECUTION_TIME=60
+    - PHP_MEMORY_LIMIT=256M
+    - PHP_POST_MAX_SIZE=40M
+    - PHP_UPLOAD_MAX_FILESIZE=32M
+    - PHP_TIMEZONE=America/Guadeloupe
+  apache:
+    image: '127.0.0.1:5000/ashledombos/spip-web:latest'
+    build: './web'
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8081:80"
+    volumes:
+      - spip-data:/var/www/html
+    configs:
+      - vhost_spip.conf
+    labels:
+      - "traefik.frontend.rule=Host:spip.docker.localhost"
+  mysql:
+    image: yobasystems/alpine-mariadb:latest
+    networks:
+      - backend
+    volumes:
+      - spip-db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=spip
+      - MYSQL_USER=spip
+      - MYSQL_PASSWORD=spip
+      - MYSQL_ROOT_PASSWORD=spip
+  redis:
+    image: "redis:alpine"
+
+#  reverse-proxy:
+#    image: traefik # The official Traefik docker image
+#    command: --api --docker # Enables the web UI and tells Træfik to listen to docker
+#    ports:
+#      - "80:80"     # The HTTP port
+#      - "8080:8080" # The Web UI (enabled by --api)
+#    networks:
+#      - frontend
+#      - backend
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events     
+      
+volumes:
+   spip-data:
+   spip-db:
+
+networks:
+   frontend:
+   backend:
+
+configs:
+   vhost_spip.conf:
+    file: ./vhost_spip.conf
