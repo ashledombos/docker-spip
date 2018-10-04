@@ -1,35 +1,35 @@
 version: '3.5'
+# Please set environment variables in .env file
 
 services:
   php:
-    image: '127.0.0.1:5000/ashledombos/spip-php:latest'
-    build: './fpm'
+    image: '127.0.0.1:5000/ashledombos/spip-fpm:latest'
+    build: ../${SPIP_VERSION}/fpm
     depends_on:
       - mysql
     networks:
       - backend
     volumes:
-      - spip-data:/var/www/html
+      - spip-core:/var/www/html/core
+      - spip-data:/var/www/html/data
     environment:
-    - SPIP_DB_SERVER=mysql
-    - SPIP_DB_HOST=mysql
-    - SPIP_DB_LOGIN=spip
-    - SPIP_DB_PASS=spip
-    - SPIP_DB_NAME=spip
-    - SPIP_DB_PREFIX=spip
-    # change after this line
-    - SPIP_ADMIN_NAME=Admin
-    - SPIP_ADMIN_LOGIN=admin
-    - SPIP_ADMIN_EMAIL=admin@spip
-    - SPIP_ADMIN_PASS=adminadmin=
-    - PHP_MAX_EXECUTION_TIME=60
-    - PHP_MEMORY_LIMIT=256M
-    - PHP_POST_MAX_SIZE=40M
-    - PHP_UPLOAD_MAX_FILESIZE=32M
-    - PHP_TIMEZONE=America/Guadeloupe
+      - SPIP_DB_SERVER=mysql
+      - SPIP_DB_HOST=mysql
+      - SPIP_DB_LOGIN=${SPIP_DB_LOGIN}
+      - SPIP_DB_PASS=${SPIP_DB_PASS}
+      - SPIP_DB_PREFIX=${SPIP_DB_PREFIX}
+      - SPIP_ADMIN_NAME=${SPIP_ADMIN_NAME}
+      - SPIP_ADMIN_LOGIN=${SPIP_ADMIN_LOGIN}
+      - SPIP_ADMIN_EMAIL=${SPIP_ADMIN_EMAIL}
+      - SPIP_ADMIN_PASS=${SPIP_ADMIN_PASS}
+      - PHP_MAX_EXECUTION_TIME=${PHP_MAX_EXECUTION_TIME}
+      - PHP_MEMORY_LIMIT=${PHP_MEMORY_LIMIT}
+      - PHP_POST_MAX_SIZE=${PHP_POST_MAX_SIZE}
+      - PHP_UPLOAD_MAX_FILESIZE=${PHP_UPLOAD_MAX_FILESIZE}
+      - PHP_TIMEZONE=${PHP_TIMEZONE}
   apache:
     image: '127.0.0.1:5000/ashledombos/spip-web:latest'
-    build: './web'
+    build: ../${SPIP_VERSION}/web
     depends_on:
       - php
       - mysql
@@ -39,9 +39,8 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - spip-data:/var/www/html
-    configs:
-      - vhost_spip.conf
+      - ./spip-core:/var/www/html/core
+      - ./spip-data:/var/www/html/data
     labels:
       - "traefik.frontend.rule=Host:spip.docker.localhost"
   mysql:
@@ -49,35 +48,15 @@ services:
     networks:
       - backend
     volumes:
-      - spip-db:/var/lib/mysql
+      - ./spip-db:/var/lib/mysql
     environment:
-      - MYSQL_DATABASE=spip
-      - MYSQL_USER=spip
-      - MYSQL_PASSWORD=spip
-      - MYSQL_ROOT_PASSWORD=spip
+      - MYSQL_DATABASE=${SPIP_DB_NAME}
+      - MYSQL_USER=${SPIP_DB_LOGIN}
+      - MYSQL_PASSWORD=${SPIP_DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
   redis:
-    image: "redis:alpine"
-
-#  reverse-proxy:
-#    image: traefik # The official Traefik docker image
-#    command: --api --docker # Enables the web UI and tells Træfik to listen to docker
-#    ports:
-#      - "80:80"     # The HTTP port
-#      - "8080:8080" # The Web UI (enabled by --api)
-#    networks:
-#      - frontend
-#      - backend
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events     
+    image: "redis:alpine" 
       
-volumes:
-   spip-data:
-   spip-db:
-
 networks:
    frontend:
    backend:
-
-configs:
-   vhost_spip.conf:
-    file: ./vhost_spip.conf
