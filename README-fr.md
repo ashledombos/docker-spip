@@ -1,101 +1,93 @@
-# Docker SPIP
+# Docker SPIP (version double image)
 
-Dockerfile permettant de mettre en production un SPIP.
+Ce projet est un fork des [images Docker officielles](https://hub.docker.com/r/ipeos/spip/) de SPIP par IPEOS.
 
-Ce docker utilise le projet [SPIP-cli](https://contrib.spip.net/SPIP-Cli)
-permettant de gérer l'auto-installation du SPIP et qui peut être utilisé pour
-administrer le SPIP en ligne de commande à l'intérieur du docker.
+Plusieurs différences spécifient ces images par rapport à celles d'IPEOS.
 
-## Tags supportés par les différents `Dockerfile`
+- Il y a deux images différentes, une pour Apache et une pour PHP-FPM. L'utilisation de ces images est donc plus adaptée en conjonction avec Docker Compose ou Docker Swarm, ou tout autre orchestrateur tel que Kubernetes, Rancher etc.
+- Les deux images sont basées sur Alpine Linux au lieu d'Ubuntu. Il en résulte des images plus petites (par exemple pour SPIP 3.2 : 237MB plus 92MB - Total 329MB contre 648MB pour l'image originale)
+- Il y a deux volumes : core et data. Le répertoire «core» ne contient que des fichiers de la distribution de SPIP et est effacé chaque fois que le conteneur PHP est redémarré. Le répertoire «data» contient tout le contenu qui peut être écrit et modifié, et est persistant.
+- Il n'y a pas d'utilisation du fichier .htaccess, AllowOverride est réglé sur false (suivant cette [recommandation](https://httpd.apache.org/docs/2.4/howto/htaccess.html#when)). À la place, /var/www/html/html/data/htaccess.txt est utilisé et inclus dans Apache conf (et Apache ne démarre que lorsque ce fichier est accessible). Ce fichier étant dans le volume "données", les changements ajoutés par les utilisateurs sont persistants.
 
-- `3.2`, `latest`
+Comme pour l'image originale, ce docker utilise le projet [SPIP-cli](https://contrib.spip.net/SPIP-Cli) pour gérer une installation automatique pour SPIP. Il peut être utilisé pour gérer le SPIP en ligne de commande.
+
+## Liens `Dockerfile` de Tags Supportés Respectivement
+
+Pour les images spip-web et spip-fpm
+
+- "3.2", "latest".
 - `3.1`
 - `3.0`
 - `2.1`
 
 ## Installation
 
-Un image automatiquement construite est accessible sur
-[Dockerhub](https://hub.docker.com/r/ipeos/spip/) et est recommendé pour vos
-installation.
+Des versions générées automatiquement de l'image sont disponibles sur [Docker Hub](https://hub.docker.com/r/ipeos/spip/).
+
+Des fichiers d'exemples docker-compose sont disponibles dans le répertoire compose_samples.
+
+## Quick Start
+
+Créez d'abord les volumes spip-core spip-data et spip-db
 
 ```bash
-docker pull ipeos/spip:latest
+docker volume create spip-core && docker volume create spip-data && docker volume create spip-db
 ```
-
-## Démarrage rapide
+Initialisation de l'essaim de dockers
+```bash
+docker swarm init
+```
+Déployer la pile
+```bash
+docker stack deploy -c docker-compose.yml docker-spip
+```
+Si vous n'exposez pas de ports, et choisissez d'utiliser træfik, lancez celui-ci
 
 ```bash
-docker run --name some-spip --link some-mysql:mysql -p 8080:80 -d ipeos/spip
+docker stack deploy -c docker-compose.traefik.yml traefik
 ```
 
-## Variables d'environnement disponibles
 
-**L'auto-installation n'est disponible que pour les version 3.X de SPIP**
+## Variables d'environnement
 
-- `SPIP_DB_SERVER`: mode de connexion à la base de donnée `sqlite3` ou `mysql` (par défaut : `mysql`)
-- `SPIP_DB_PREFIX`: prefixe des tables SQL (par défaut: `spip`)
+Toutes ces variables d'environnement peuvent être définies dans le fichier.env.
 
-### Pour une installation avec une base de donnée MySQL
+L'installation automatique n'est disponible que sur les versions SPIP 3.X****.
 
-**La base de donnée MySQL doit exister avant l'installation.
-Elle ne sera automatiquement pas créée.**
+- `SPIP_DB_SERVER` : méthode de connexion à la base de données `sqlite3` ou `mysql` (par défaut : `mysql`)
+- `SPIP_DB_PREFIX` : Préfixe de la table SQL (par défaut : `spip`)
 
-- `SPIP_DB_HOST`: nom de domaine ou IP du server MySQL (par défaut : `mysql`)
-- `SPIP_DB_LOGIN`: identifiant de l'utilisateur MySQL (par défaut : `spip`)
-- `SPIP_DB_PASS`: mot de passe de l'utilisateur MySQL (par défaut : `spip`)
-- `SPIP_DB_NAME`: nom de la base de donnée (par défault `spip`)
+### Pour la base de données MySQL uniquement
 
-### Création du compte administrateur
+**La base de données MySQL doit exister avant l'installation, l'ordre de lancement des services est donc important.**
 
-- `SPIP_ADMIN_NAME`: nom du compte (par défaut : `Admin`)
-- `SPIP_ADMIN_LOGIN`: identifiant du compte (par défaut : `admin`)
-- `SPIP_ADMIN_EMAIL`: email du compte (par défaut : `admin@spip`)
-- `SPIP_ADMIN_PASS`: mot de passe du compte (par défaut : `adminadmin`)
+- `SPIP_DB_HOST` : Nom d'hôte du serveur MySQL ou IP (par défaut : `mysql`)
+- `SPIP_DB_LOGIN` : Connexion utilisateur MySQL (par défaut : `spip`)
+- `SPIP_DB_PASS` : Mot de passe utilisateur MySQL (par défaut : `spip`)
+- `SPIP_DB_NAME` : Nom de la base de données MySQL (par défaut : `spip`)
 
-### Variables PHP
+#### Compte Admin
 
-Vous pouvez changer des varibles PHP pour optimiser votre installation.
+- `SPIP_ADMIN_NAME` : nom du compte (par défaut : `Admin`)
+- `SPIP_ADMIN_LOGIN` : login du compte (par défaut : `admin`)
+- `SPIP_ADMIN_EMAIL` : email du compte (par défaut : `admin@spip`)
+- `SPIP_ADMIN_PASS` : mot de passe du compte (par défaut : `adminadmin`)
 
-- `PHP_MAX_EXECUTION_TIME` (par défaut : `60`)
+#### Variables PHP
+
+Optmisation des variables PHP
+
+- `TEMPS_MAX_EXECUTION_TIME` (par défaut : `60`)
 - `PHP_MEMORY_LIMIT` (par défaut : `256M`)
 - `PHP_POST_MAX_SIZE` (par défaut : `40M`)
-- `PHP_UPLOAD_MAX_FILESIZE` (par défaut : `32M`)
-- `PHP_TIMEZONE` (par défaut : `America/Guadeloupe`)
-
-## Volume disponible
-
-- `/var/www/html` : répertoire d'installation du SPIP
-
-### Démarrer SPIP en externalisant vos données
-
-```bash
-docker run --name some-spip -p 8080:80 -d \
-  -e SPIP_DB_SERVER=sqlite3 \
-  -v /tmp/spip/config:/var/www/html/config \
-  -v /tmp/spip/IMG:/var/www/html/IMG \
-  -v /tmp/spip/lib:/var/www/html/lib \
-  -v /tmp/spip/plugins:/var/www/html/plugins \
-  -v /tmp/spip/squelettes:/var/www/html/squelettes \
-  -v /tmp/spip/tmp/dump:/var/www/html/tmp/dump \
-  -v /tmp/spip/tmp/log:/var/www/html/tmp/log \
-  -v /tmp/spip/tmp/log/apache2:/var/log/apache2 \
-  -v /tmp/spip/tmp/upload:/var/www/html/tmp/upload \
-   ipeos/spip:latest
-```
-
-## Contribuer
-
-Cette image a été développé par [IPEOS](http://www.ipeos.com) pour le déploiement en production.
-
-Si vous appréciez cette image utile, vous pouvez :
-
-* Soumettre un Pull Request, pour que nous intégrions vos améliorations ou corrections de bug
-* Rejoindre la communauté SPIP et nous aider à répondre les demandes.
+- `PHP_UPLOAD_MAX_FILESIZE` (par défaut `32M`)
+- `PHP_TIMEZONE` (par défaut : `Amérique / Guadeloupe`)
 
 ## Équipe
 
-### IPEOS
+*[Raphaël Jadot](https://github.com/ashledombos/)
 
-* [Laurent Vergerolle](https://github.com/psychoz971/)
-* [Olivier Watté](https://github.com/owatte/)
+#### IPEOS
+
+*[Laurent Vergerolle](https://github.com/psychoz971/)
+*[Olivier Watté](https://github.com/owatte/)
