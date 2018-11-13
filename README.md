@@ -4,7 +4,7 @@ This project is a fork of IPEOS official Docker Spip [images set](https://hub.do
 
 There are several differences with original Docker image from IPEOS.
 
-- There are two different images, one for Apache and one for PHP-FPM. This is adapted to  be used with Docker Compose or Docker Swarm (recommended), or any orchestrator such as Kubernetes, Rancher etc.
+- There are two different images, one for Apache and one for PHP-FPM. This is adapted to  be used with Docker Compose or Docker Swarm, or any orchestrator such as Kubernetes, Rancher etc.
 - Both images are based on Alpine Linux instead of Ubuntu. This results in thiner images (for instance for SPIP 3.2: 237MB plus 92MB - Total 329MB against 648MB for original image)
 - There are two volumes: core and data. Core only contains distributed files and is erased each time PHP container is restarted. Data contains all content that can be written and modified, and is persistent.
 - There is no use of .htaccess file, AllowOverride is set to false (following [this](https://httpd.apache.org/docs/2.4/howto/htaccess.html#when)). Instead, /var/www/html/data/htaccess.txt is used and included in Apache conf (and Apache doesn't start until this file is reachable). This file being in “data” volume, changes added by users are persistent.
@@ -40,10 +40,13 @@ Deploy stack
 ```bash
 docker stack deploy -c docker-compose.yml docker-spip
 ```
+If you use træfik you can launch it
+
+```bash
+docker stack deploy -c docker-compose.traefik.yml traefik
+```
 
 ## Available Environment Vars
-
-All these environment vars can be set in .env file.
 
 **Auto-install is only available on SPIP 3.X versions**
 
@@ -75,13 +78,6 @@ Can change PHP vars to optimize your installation.
 - `PHP_POST_MAX_SIZE` (default: `40M`)
 - `PHP_UPLOAD_MAX_FILESIZE` (default `32M`)
 - `PHP_TIMEZONE` (default: `America/Guadeloupe`)
-
-## Contributing
-
-If you find this image useful here's how you can help:
-
-* Send a Pull Request with your awesome enhancements and bug fixes
-* Be a part of the community and help resolve Issues
 
 ## Team
 
