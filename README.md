@@ -1,5 +1,8 @@
 # Docker SPIP (Dual image version)
 
+* [spip-web](https://hub.docker.com/r/ashledombos/spip-web/)
+* [spip-fpm](https://hub.docker.com/r/ashledombos/spip-web/)
+
 This project is a fork of IPEOS official Docker Spip [images set](https://hub.docker.com/r/ipeos/spip/).
 
 There are several differences with original Docker image from IPEOS.
@@ -22,7 +25,10 @@ Both for spip-web and spip-fpm images
 
 ## Installation
 
-Automated builds of the image are available on [Dockerhub](https://hub.docker.com/r/ipeos/spip/).
+Automated builds of the image are available on Dockerhub.
+
+* [spip-web](https://hub.docker.com/r/ashledombos/spip-web/)
+* [spip-fpm](https://hub.docker.com/r/ashledombos/spip-web/)
 
 Recommanded way is to download docker-compose.yml and .env file both located in compose_samples directory. Save the in the same local directory. They are usable as it, but you can edit both files to suit your needs. By default, latest SPIP release is downloaded and volumes are used for core and data (plus another volume for database)
 
