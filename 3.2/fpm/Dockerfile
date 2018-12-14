@@ -1,5 +1,39 @@
+FROM alpine:latest as pngnq-s9
+LABEL maintainer "Raphaël Jadot"
+
+# Compile pngnq-s9 in which is a useful library (used by smush plugin)
+WORKDIR /
+RUN apk --update add \
+    build-base \
+    gcc \
+    abuild \
+    binutils \
+    libpng-dev
+RUN curl -sL -o- "https://sourceforge.net/projects/pngnqs9/files/pngnq-s9-2.0.2.tar.gz" |tar -xz \
+    && cd pngnq-s9-2.0.2 \
+    && ./configure \
+    && make
+
+# new build stage
 FROM php:7.1-fpm-alpine
-LABEL maintainer "Laurent Vergerolle <docker@ipeos.com>"
+COPY --from=pngnq-s9 /pngnq-s9-2.0.2/src/pngnq-s9 /usr/local/bin/pngnq
+
+WORKDIR /
+RUN apk --update add \
+    build-base \
+    gcc \
+    abuild \
+    binutils \
+    libpng-dev
+RUN curl -sL -o- "https://sourceforge.net/projects/pngnqs9/files/pngnq-s9-2.0.2.tar.gz" |tar -xz \
+    && cd pngnq-s9-2.0.2 \
+    && ./configure \
+    && make
+
+# new build stage
+FROM php:7.1-fpm-alpine
+COPY --from=pngnq-s9 /pngnq-s9-2.0.2/src/pngnq-s9 /usr/local/bin/pngnq
+
 
 # Install ghostscript
 RUN apk --update --no-cache add \
@@ -34,6 +68,11 @@ RUN apk --update --no-cache add \
   && docker-php-ext-enable imagick \
   && apk del ${PHPIZE_DEPS}
   
+# Install additional image tools
+RUN apk --update --no-cache add \
+    optipng \
+    gifsicle
+    
 # Install Redis
 RUN pecl bundle -d /usr/src/php/ext redis \
     && rm /usr/src/php/ext/redis-*.tgz \
