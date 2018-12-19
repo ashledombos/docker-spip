@@ -61,9 +61,9 @@ ln -s $PWD/data/plugins core/
 ln -s $PWD/data/lib core/
 ln -s $PWD/data/squelettes core/
 ln -s $PWD/data/htaccess.txt core/
-ln -s $PWD/tmp/dump core/tmp/
-ln -s $PWD/tmp/log core/tmp/
-ln -s $PWD/tmp/upload core/tmp/
+ln -s $PWD/data/tmp/dump core/tmp/
+ln -s $PWD/data/tmp/log core/tmp/
+ln -s $PWD/data/tmp/upload core/tmp/
 
 
 
