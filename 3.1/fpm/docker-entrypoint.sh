@@ -46,12 +46,12 @@ echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if th
 mkdir -p data/plugins/auto
 mkdir -p data/lib
 mkdir -p data/squelettes
-
-echo >&2 "Populate $PWD/core/tmp directory"
-mkdir -p core/tmp/{dump,log,upload}
+mkdir -p data/tmp/dump
+mkdir -p data/tmp/log
+mkdir -p data/tmp/upload
 
 echo >&2 "change rights"
-chown -R www-data:www-data data/IMG data/config data/plugins data/lib data/squelettes data/htaccess.txt core/tmp
+chown -R www-data:www-data data/IMG data/config data/plugins data/lib data/squelettes data/htaccess.txt data/tmp
 
 # As core directory is the webroot directory, we link all subdirectories from data volume
 echo >&2 "create all symlinks"
@@ -61,6 +61,11 @@ ln -s $PWD/data/plugins core/
 ln -s $PWD/data/lib core/
 ln -s $PWD/data/squelettes core/
 ln -s $PWD/data/htaccess.txt core/
+ln -s $PWD/data/tmp/dump core/tmp/
+ln -s $PWD/data/tmp/log core/tmp/
+ln -s $PWD/data/tmp/upload core/tmp/
+
+
 
 # Install SPIP
 if [ ! -e data/config/connect.php ]; then
