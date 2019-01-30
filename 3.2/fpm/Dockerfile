@@ -18,22 +18,6 @@ RUN curl -sL -o- "https://sourceforge.net/projects/pngnqs9/files/pngnq-s9-2.0.2.
 FROM php:7.1-fpm-alpine
 COPY --from=pngnq-s9 /pngnq-s9-2.0.2/src/pngnq-s9 /usr/local/bin/pngnq
 
-WORKDIR /
-RUN apk --update add \
-    build-base \
-    gcc \
-    abuild \
-    binutils \
-    libpng-dev
-RUN curl -sL -o- "https://sourceforge.net/projects/pngnqs9/files/pngnq-s9-2.0.2.tar.gz" |tar -xz \
-    && cd pngnq-s9-2.0.2 \
-    && ./configure \
-    && make
-
-# new build stage
-FROM php:7.1-fpm-alpine
-COPY --from=pngnq-s9 /pngnq-s9-2.0.2/src/pngnq-s9 /usr/local/bin/pngnq
-
 
 # Install ghostscript
 RUN apk --update --no-cache add \
