@@ -41,6 +41,9 @@ else
   rm core/htaccess.txt
 fi
 
+#Include other Directory and Location rules
+echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt
+
 # All necessary directories should be created if they aren't yet
 echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if they don't exist"
 mkdir -p data/plugins/auto
@@ -61,6 +64,7 @@ ln -s $PWD/data/plugins core/
 ln -s $PWD/data/lib core/
 ln -s $PWD/data/squelettes core/
 ln -s $PWD/data/htaccess.txt core/
+ln -s $PWD/data/htdir.txt core/
 ln -s $PWD/data/tmp/dump core/tmp/
 ln -s $PWD/data/tmp/log core/tmp/
 ln -s $PWD/data/tmp/upload core/tmp/
