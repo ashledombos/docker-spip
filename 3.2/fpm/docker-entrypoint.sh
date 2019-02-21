@@ -41,12 +41,6 @@ else
   rm core/htaccess.txt
 fi
 
-#Include other Directory and Location rules
-echo >&2 "Creating $PWD/data/htdir.txt if needed"
-if [ ! -e data/htaccess.txt ]; then
-  echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt
-fi
-
 # All necessary directories should be created if they aren't yet
 echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if they don't exist"
 mkdir -p data/plugins/auto
