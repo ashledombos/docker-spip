@@ -6,6 +6,12 @@ RUN echo "Include /usr/local/apache2/conf/spip.apache.conf" \
     >> /usr/local/apache2/conf/httpd.conf
     
 RUN { \
+    if [ ! -e /var/www/html/data/htaccess.txt ]; then \
+      echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt \
+    fi \
+    }
+    
+RUN { \
     echo 'until [ -e /var/www/html/core/htaccess.txt ]; do'; \
     echo '    >&2 echo "htaccess.txt unavailable - sleeping"'; \
     echo '    sleep 1'; \
