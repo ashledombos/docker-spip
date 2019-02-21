@@ -6,7 +6,7 @@ RUN echo "Include /usr/local/apache2/conf/spip.apache.conf" \
     >> /usr/local/apache2/conf/httpd.conf
     
 RUN { \
-    if [ ! -e /var/www/html/data/htaccess.txt ]; then \
+    if [ ! -e /var/www/html/data/htdir.txt ]; then \
       echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt \
     fi \
     }
