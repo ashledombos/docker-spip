@@ -4,10 +4,13 @@ COPY spip.apache.conf /usr/local/apache2/conf/spip.apache.conf
 
 RUN echo "Include /usr/local/apache2/conf/spip.apache.conf" \
     >> /usr/local/apache2/conf/httpd.conf
-    
+
+VOLUME ["/var/www/html/core/"]
+VOLUME ["/var/www/html/data/"]
+
 RUN { \
     if [ ! -e /var/www/html/data/htdir.txt ]; then \
-      echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt \
+      echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt; \
     fi \
     }
     
@@ -19,9 +22,6 @@ RUN { \
     echo ''; \
     echo 'exec "$@"'; \
     } > /docker-entrypoint.sh
-    
-VOLUME ["/var/www/html/core/"]
-VOLUME ["/var/www/html/data/"]
     
 EXPOSE 80
 
