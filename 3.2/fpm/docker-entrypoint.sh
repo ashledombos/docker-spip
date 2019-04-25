@@ -41,7 +41,7 @@ else
   rm core/htaccess.txt
 fi
 
-# For better performance, we include the content of htaccess.txt in apache conf
+# For better performance, we include the content of htdir.txt in apache conf
 echo >&2 "Apache uses $PWD/data/htdir.txt for location and directory rules"
 if [ ! -e /var/www/html/data/htdir.txt ]; then
   echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt;
