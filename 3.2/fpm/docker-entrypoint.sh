@@ -41,6 +41,12 @@ else
   rm core/htaccess.txt
 fi
 
+# For better performance, we include the content of htaccess.txt in apache conf
+echo >&2 "Apache uses $PWD/data/htdir.txt for location and directory rules"
+if [ ! -e /var/www/html/data/htdir.txt ]; then
+  echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt;
+fi
+
 # All necessary directories should be created if they aren't yet
 echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if they don't exist"
 mkdir -p data/plugins/auto
@@ -51,7 +57,7 @@ mkdir -p data/tmp/log
 mkdir -p data/tmp/upload
 
 echo >&2 "change rights"
-chown -R www-data:www-data data/IMG data/config data/plugins data/lib data/squelettes data/htaccess.txt data/tmp
+chown -R www-data:www-data data/IMG data/config data/plugins data/lib data/squelettes data/tmp
 
 # As core directory is the webroot directory, we link all subdirectories from data volume
 echo >&2 "create all symlinks"
@@ -60,8 +66,6 @@ ln -s $PWD/data/config core/
 ln -s $PWD/data/plugins core/
 ln -s $PWD/data/lib core/
 ln -s $PWD/data/squelettes core/
-ln -s $PWD/data/htaccess.txt core/
-ln -s $PWD/data/htdir.txt core/
 ln -s $PWD/data/tmp/dump core/tmp/
 ln -s $PWD/data/tmp/log core/tmp/
 ln -s $PWD/data/tmp/upload core/tmp/
