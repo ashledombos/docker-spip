@@ -1,4 +1,5 @@
-FROM httpd:2.4.34-alpine
+FROM httpd:2.4-alpine
+LABEL maintainer "Raphaël Jadot"
 # Copy apache vhost file to proxy php requests to php-fpm container
 COPY spip.apache.conf /usr/local/apache2/conf/spip.apache.conf
 
@@ -15,8 +16,8 @@ RUN { \
     }
     
 RUN { \
-    echo 'until [ -e /var/www/html/core/htaccess.txt ]; do'; \
-    echo '    >&2 echo "htaccess.txt unavailable - sleeping"'; \
+    echo 'until [ -e /var/www/html/data/htaccess.txt ] && [ -e /var/www/html/data/htdir.txt ]; do'; \
+    echo '    >&2 echo "htaccess.txt or htdir.txt unavailable - sleeping"'; \
     echo '    sleep 1'; \
     echo 'done'; \
     echo ''; \
