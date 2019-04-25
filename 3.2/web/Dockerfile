@@ -9,11 +9,11 @@ RUN echo "Include /usr/local/apache2/conf/spip.apache.conf" \
 VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
 
-RUN { \
-    if [ ! -e /var/www/html/data/htdir.txt ]; then \
-      echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt; \
-    fi \
-    }
+#RUN { \
+#    if [ ! -e /var/www/html/data/htdir.txt ]; then \
+#      echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt; \
+#    fi \
+#    }
     
 RUN { \
     echo 'until [ -e /var/www/html/data/htaccess.txt ] && [ -e /var/www/html/data/htdir.txt ]; do'; \
