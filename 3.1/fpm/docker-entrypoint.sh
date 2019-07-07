@@ -47,6 +47,12 @@ if [ ! -e /var/www/html/data/htdir.txt ]; then
   echo "#Put your Apache Directory or Location rules here" > /var/www/html/data/htdir.txt;
 fi
 
+# robots-cdn.txt optional if wanted to add specific rules for origins
+echo >&2 "Create and/or link robots-cdn.txt"
+if [ ! -e /var/www/html/data/robots-cdn.txt ]; then
+  echo "User-agent: *\nDisallow: /" > /var/www/html/data/robots-cdn.txt;
+fi
+
 # All necessary directories should be created if they aren't yet
 echo >&2 "Create plugins, libraries and template directories in $PWD/data/ if they don't exist"
 mkdir -p data/plugins/auto
@@ -69,6 +75,7 @@ ln -s $PWD/data/squelettes core/
 ln -s $PWD/data/tmp/dump core/tmp/
 ln -s $PWD/data/tmp/log core/tmp/
 ln -s $PWD/data/tmp/upload core/tmp/
+ln -s $PWD/data/robots-cdn.txt core/
 
 
 
