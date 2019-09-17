@@ -80,7 +80,7 @@ VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
 
 ENV SPIP_VERSION 3.1
-ENV SPIP_PACKAGE 3.1.10
+ENV SPIP_PACKAGE 3.1.11
 
 
 # Install SPIP
