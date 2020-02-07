@@ -62,10 +62,11 @@ RUN pecl bundle -d /usr/src/php/ext redis \
     && rm /usr/src/php/ext/redis-*.tgz \
     && docker-php-ext-install redis
 
-# Active over php extension (mbstring and json already installed)
+# Install other php extension (mbstring and json already installed)
 RUN apk --update --no-cache add \
     zlib-dev \
-  && docker-php-ext-install zip opcache
+    openldap-dev \
+  && docker-php-ext-install zip opcache ldap
 
 # Install utils and remove apt cache (no need to clean cache as we used --no-cache)
 RUN apk --update --no-cache add \
