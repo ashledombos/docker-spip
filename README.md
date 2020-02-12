@@ -1,4 +1,4 @@
-# Docker SPIP (Dual image version)
+# Docker SPIP (stack version)
 
 * [spip-web](https://hub.docker.com/r/ashledombos/spip-web/)
 * [spip-fpm](https://hub.docker.com/r/ashledombos/spip-web/)
@@ -20,8 +20,6 @@ Both for spip-web and spip-fpm images
 
 - `3.2`, `latest`
 - `3.1`
-- `3.0`
-- `2.1`
 
 ## Installation
 
