@@ -98,6 +98,8 @@ RUN git clone https://git.spip.net/spip-contrib-outils/spip-cli.git /opt/spip-cl
   rm -rf /opt/spip-cli/.gitignore; \
   ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip; \
   ln -s /opt/spip-cli/bin/spipmu /usr/local/bin/spipmu;
+
+RUN cd /opt/spip-cli && /opt/composer.phar install
     
 VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
@@ -108,7 +110,7 @@ ENV SPIP_PACKAGE 3.2.8
 
 # Install SPIP
 RUN set -ex; \
-  curl -o spip.zip -fSL "files.spip.net/spip/archives/SPIP-v${SPIP_PACKAGE}.zip"; \
+  curl -o spip.zip -fSL "files.spip.net/spip/archives/spip-v${SPIP_PACKAGE}.zip"; \
   unzip spip.zip -d /usr/src/; \
   rm spip.zip; \
   chown -R www-data:www-data /usr/src/spip
