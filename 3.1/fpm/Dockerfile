@@ -98,7 +98,7 @@ ENV SPIP_PACKAGE 3.1.14
 
 # Install SPIP
 RUN set -ex; \
-  curl -o spip.zip -fSL "files.spip.net/spip/archives/SPIP-v${SPIP_PACKAGE}.zip"; \
+  curl -o spip.zip -fSL "files.spip.net/spip/archives/spip-v${SPIP_PACKAGE}.zip"; \
   unzip spip.zip -d /usr/src/; \
   rm spip.zip; \
   chown -R www-data:www-data /usr/src/spip
