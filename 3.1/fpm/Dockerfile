@@ -68,13 +68,26 @@ RUN { \
 # (as it's not ubuntu a2enmode doesn't work. Instead we activate the module in spip.apache.conf)
 
 # Install SPIP-Cli (Composer is now needed)
-RUN php -r "readfile('http://getcomposer.org/installer');" \
-    | php -- --install-dir=/usr/local/bin/ --filename=composer --no-plugins --no-scripts \
-    && svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip-cli \
-    && rm -rf /opt/spip-cli/.svn \
-    && cd /opt/spip-cli \
-    && composer install \
-    && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip
+#RUN php -r "readfile('http://getcomposer.org/installer');" \
+#    | php -- --install-dir=/usr/local/bin/ --filename=composer --no-plugins --no-scripts \
+#    && svn checkout svn://zone.spip.org/spip-zone/_outils_/spip-cli/trunk /opt/spip-cli \
+#    && rm -rf /opt/spip-cli/.svn \
+#    && cd /opt/spip-cli \
+#    && composer install \
+#    && ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip
+    
+# Install SPIP-Cli
+RUN cd /opt; \
+  curl --silent --show-error https://getcomposer.org/installer | php
+
+RUN git clone https://git.spip.net/spip-contrib-outils/spip-cli.git /opt/spip-cli; \
+  rm -rf /opt/spip-cli/.git; \
+  rm -rf /opt/spip-cli/.gitattributes; \
+  rm -rf /opt/spip-cli/.gitignore; \
+  ln -s /opt/spip-cli/bin/spip /usr/local/bin/spip; \
+  ln -s /opt/spip-cli/bin/spipmu /usr/local/bin/spipmu;
+
+RUN cd /opt/spip-cli && /opt/composer.phar install
     
 VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
