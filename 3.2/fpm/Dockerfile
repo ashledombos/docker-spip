@@ -105,7 +105,7 @@ VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
 
 ENV SPIP_VERSION 3.2
-ENV SPIP_PACKAGE 3.2.8
+ENV SPIP_PACKAGE 3.2.9
 
 
 # Install SPIP
