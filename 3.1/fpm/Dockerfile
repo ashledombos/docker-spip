@@ -1,5 +1,5 @@
 FROM php:7.1-fpm-alpine
-LABEL maintainer "Laurent Vergerolle <docker@ipeos.com>"
+LABEL maintainer "Raphaël JADOT <rj+spip@hodo.fr>"
 
 # Install ghostscript
 RUN apk --update --no-cache add \
@@ -93,7 +93,7 @@ VOLUME ["/var/www/html/core/"]
 VOLUME ["/var/www/html/data/"]
 
 ENV SPIP_VERSION 3.1
-ENV SPIP_PACKAGE 3.1.14
+ENV SPIP_PACKAGE 3.1.15
 
 
 # Install SPIP
