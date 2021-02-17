@@ -1,5 +1,5 @@
 FROM php:7.1-fpm-alpine
-LABEL maintainer "Raphaël JADOT <rj+spip@hodo.fr>"
+LABEL maintainer "Raphaël JADOT <raphael+spip@openmandriva.org>"
 
 # Install ghostscript
 RUN apk --update --no-cache add \
