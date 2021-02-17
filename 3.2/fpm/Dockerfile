@@ -1,5 +1,5 @@
 FROM alpine:latest as pngnq-s9
-LABEL maintainer "Raphaël Jadot"
+LABEL maintainer "Raphaël Jadot <raphael+spip@openmandriva.org>"
 
 # Compile pngnq-s9 in which is a useful library (used by smush plugin)
 WORKDIR /
